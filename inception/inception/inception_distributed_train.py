@@ -43,7 +43,7 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
                            """worker jobs. e.g. """
                            """'machine1:2222,machine2:1111,machine2:2222'""")
 
-tf.app.flags.DEFINE_string('train_dir', '/home/mcl/tensorflow/tensorflow/models/baxNet' +
+tf.app.flags.DEFINE_string('train_dir', os.path.expanduser('~') + '/tensorflow/tensorflow/models/baxNet' +
                            '/inception/inception/model_logs',
                            """Directory where to write event logs """
                            """and checkpoint.""")

@@ -33,7 +33,7 @@ from inception.slim import slim
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('train_dir', '/home/mcl/tensorflow/tensorflow/models/baxNet/inception' +
+tf.app.flags.DEFINE_string('train_dir', os.path.expanduser('~') + '/tensorflow/tensorflow/models/baxNet/inception' +
                            '/inception/model_logs',
                            """Directory where to write event logs """
                            """and checkpoint.""")

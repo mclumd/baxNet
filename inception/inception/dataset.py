@@ -35,7 +35,7 @@ FLAGS = tf.app.flags.FLAGS
 
 # Basic model parameters.
 #tf.app.flags.DEFINE_string('data_dir', '/tmp/mydata',
-tf.app.flags.DEFINE_string('data_dir', '/home/mcl/ILSVRC2015/Data/CLS-LOC/tfRecords',
+tf.app.flags.DEFINE_string('data_dir', os.path.expanduser('~') + '/ILSVRC2015/Data/CLS-LOC/tfRecords',
                            """Path to the processed data, i.e. """
                            """TFRecord of Example protos.""")
 
