@@ -36,7 +36,7 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('eval_dir', '/tmp/imagenet_eval',
                            """Directory where to write event logs.""")
 tf.app.flags.DEFINE_string('checkpoint_dir', os.path.expanduser('~') + '/tensorflow/tensorflow/models/baxNet/inception' +
-                           '/inception/model_logs,
+                           '/inception/model_logs',
                            """Directory where to read model checkpoints.""")
 
 # Flags governing the frequency of the eval.
@@ -46,7 +46,7 @@ tf.app.flags.DEFINE_boolean('run_once', False,
                             """Whether to run eval only once.""")
 
 # Flags governing the data used for the eval.
-tf.app.flags.DEFINE_integer('num_examples', 50000,
+tf.app.flags.DEFINE_integer('num_examples', 50050,
                             """Number of examples to run. Note that the eval """
                             """ImageNet dataset contains 50000 examples.""")
 tf.app.flags.DEFINE_string('subset', 'validation',

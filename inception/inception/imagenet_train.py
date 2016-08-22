@@ -29,6 +29,7 @@ FLAGS = tf.app.flags.FLAGS
 
 
 def main(_):
+  tf.set_random_seed(1234567)
   dataset = ImagenetData(subset=FLAGS.subset)
   assert dataset.data_files()
   if tf.gfile.Exists(FLAGS.train_dir):
