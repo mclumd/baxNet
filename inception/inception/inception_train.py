@@ -197,7 +197,7 @@ def train(dataset):
                                     global_step,
                                     decay_steps,
                                     FLAGS.learning_rate_decay_factor,
-                                    staircase=True)
+                                    staircase=False)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.RMSPropOptimizer(lr, RMSPROP_DECAY,
