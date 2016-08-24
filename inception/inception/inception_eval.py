@@ -53,7 +53,7 @@ tf.app.flags.DEFINE_string('subset', 'validation',
                            """Either 'validation' or 'train'.""")
 
 
-def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op):
+def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op, labels):
   """Runs Eval once.
 
   Args:
@@ -100,12 +100,17 @@ def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op):
       step = 0
 
       print('%s: starting evaluation on (%s).' % (datetime.now(), FLAGS.subset))
+      per_class_accuracy = {}
       start_time = time.time()
       while step < num_iter and not coord.should_stop():
         top_1, top_5 = sess.run([top_1_op, top_5_op])
         count_top_1 += np.sum(top_1)
         count_top_5 += np.sum(top_5)
         step += 1
+        for i,j in zip(labels, top_1):
+          if not per_class_accuracy[i]:
+            per_class_accuracy[i] = 0.0
+          per_class_accuracy[i] += j 
         if step % 20 == 0:
           duration = time.time() - start_time
           sec_per_batch = duration / 20.0
@@ -120,7 +125,9 @@ def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op):
       recall_at_5 = count_top_5 / total_sample_count
       print('%s: precision @ 1 = %.4f recall @ 5 = %.4f [%d examples]' %
             (datetime.now(), precision_at_1, recall_at_5, total_sample_count))
-
+      for i in per_class_accuracy:
+        per_class_accuracy[i] = per_class_accuracy[i] / 50
+      print(per_class_accuracy)
       summary = tf.Summary()
       summary.ParseFromString(sess.run(summary_op))
       summary.value.add(tag='Precision @ 1', simple_value=precision_at_1)
@@ -166,7 +173,7 @@ def evaluate(dataset):
                                             graph_def=graph_def)
 
     while True:
-      _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op)
+      _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op, labels)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
