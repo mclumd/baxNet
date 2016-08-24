@@ -268,16 +268,16 @@ def distort_image(image, height, width, bbox, thread_id=0, scope=None):
     # Randomly distort the colors.
     distorted_image = distort_color(distorted_image, thread_id)
 
-    grayscale_distorted_image = tf.image.rgb_to_grayscale(distorted_image)
+#    grayscale_distorted_image = tf.image.rgb_to_grayscale(distorted_image)
 
     if not thread_id:
       tf.image_summary('final_distorted_image',
                        tf.expand_dims(distorted_image, 0))
-      tf.image_summary('grayscale_image',
-                       tf.expand_dims(grayscale_distorted_image, 0))
+#      tf.image_summary('grayscale_image',
+#                       tf.expand_dims(grayscale_distorted_image, 0))
 
-    distorted_image = tf.concat(2, [distorted_image, grayscale_distorted_image])
-    print(tf.shape(distorted_image))
+#    distorted_image = tf.concat(2, [distorted_image, grayscale_distorted_image])
+#    print(tf.shape(distorted_image))
     return distorted_image
 
 
@@ -302,8 +302,8 @@ def eval_image(image, height, width, scope=None):
     image = tf.image.resize_bilinear(image, [height, width],
                                      align_corners=False)
     image = tf.squeeze(image, [0])
-    grayscale_image = tf.image.rgb_to_grayscale(image)
-    image = tf.concat(2, [image, grayscale_image])
+#    grayscale_image = tf.image.rgb_to_grayscale(image)
+#    image = tf.concat(2, [image, grayscale_image])
     return image
 
 
@@ -508,8 +508,8 @@ def batch_inputs(dataset, batch_size, train, num_preprocess_threads=None,
     # Reshape images into these desired dimensions.
     height = FLAGS.image_size
     width = FLAGS.image_size
-#    depth = 3
-    depth = 4
+    depth = 3
+#    depth = 4
 
     images = tf.cast(images, tf.float32)
     images = tf.reshape(images, shape=[batch_size, height, width, depth])
