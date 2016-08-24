@@ -53,7 +53,8 @@ tf.app.flags.DEFINE_boolean('fine_tune', False,
                             """If set, randomly initialize the final layer """
                             """of weights in order to train the network on a """
                             """new task.""")
-tf.app.flags.DEFINE_string('pretrained_model_checkpoint_path', '',
+tf.app.flags.DEFINE_string('pretrained_model_checkpoint_path', os.path.expanduser('~') + '/tensorflow/tensorflow' +
+                           '/models/baxNet/inception/inception/model_logs_alt',
                            """If specified, restore this pretrained model """
                            """before beginning any training.""")
 
@@ -317,13 +318,33 @@ def train(dataset):
     sess.run(init)
 
     if FLAGS.pretrained_model_checkpoint_path:
-      assert tf.gfile.Exists(FLAGS.pretrained_model_checkpoint_path)
+      ckpt = tf.train.get_checkpoint_state(FLAGS.pretrained_model_checkpoint_path)
+#      assert tf.gfile.Exists(FLAGS.pretrained_model_checkpoint_path)
       variables_to_restore = tf.get_collection(
           slim.variables.VARIABLES_TO_RESTORE)
       restorer = tf.train.Saver(variables_to_restore)
-      restorer.restore(sess, FLAGS.pretrained_model_checkpoint_path)
-      print('%s: Pre-trained model restored from %s' %
+
+      if ckpt and ckpt.model_checkpoint_path:
+        if os.path.isabs(ckpt.model_checkpoint_path):
+        # Restores from checkpoint with absolute path.
+          restorer.restore(sess, ckpt.model_checkpoint_path)
+        else:
+        # Restores from checkpoint with relative path.
+          restorer.restore(sess, os.path.join(FLAGS.checkpoint_dir,
+                                         ckpt.model_checkpoint_path))
+          # Assuming model_checkpoint_path looks something like:
+          #   /my-favorite-path/imagenet_train/model.ckpt-0,
+          # extract global_step from it.
+        global_step_num = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+        print(global_step)
+        sess.run(global_step.assign(float(global_step_num)))
+        print('%s: Pre-trained model restored from %s' %
             (datetime.now(), FLAGS.pretrained_model_checkpoint_path))
+      else:
+          print('No checkpoint file found')
+#          assert(False)
+#      restorer.restore(sess, FLAGS.pretrained_model_checkpoint_path)
+
 
     # Start the queue runners.
     tf.train.start_queue_runners(sess=sess)
@@ -332,7 +353,7 @@ def train(dataset):
         FLAGS.train_dir,
         graph_def=sess.graph.as_graph_def(add_shapes=True))
 
-    for step in xrange(FLAGS.max_steps):
+    for step in xrange(int(sess.run(global_step)),FLAGS.max_steps):
       start_time = time.time()
       _, loss_value = sess.run([train_op, loss])
       duration = time.time() - start_time
