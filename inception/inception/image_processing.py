@@ -233,7 +233,7 @@ def distort_image(image, height, width, bbox, thread_id=0, scope=None):
     sample_distorted_bounding_box = tf.image.sample_distorted_bounding_box(
         tf.shape(image),
         bounding_boxes=bbox,
-        min_object_covered=0.1,
+        min_object_covered=0.8,
         aspect_ratio_range=[0.75, 1.33],
         area_range=[0.05, 1.0],
         max_attempts=100,
