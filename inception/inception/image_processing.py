@@ -302,6 +302,8 @@ def eval_image(image, height, width, scope=None):
     image = tf.image.resize_bilinear(image, [height, width],
                                      align_corners=False)
     image = tf.squeeze(image, [0])
+    grayscale_image = tf.image.rgb_to_grayscale(image)
+    image = tf.concat(2, [image, grayscale_image])
     return image
 
 

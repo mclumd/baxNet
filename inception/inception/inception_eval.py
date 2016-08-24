@@ -107,10 +107,11 @@ def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op, labels):
         count_top_1 += np.sum(top_1)
         count_top_5 += np.sum(top_5)
         step += 1
-        for i,j in zip(labels, top_1):
-          if not per_class_accuracy[i]:
-            per_class_accuracy[i] = 0.0
-          per_class_accuracy[i] += j 
+#        for i,j in zip(sess.run(labels), top_1):
+#          print('%d:%d'%(i,j))
+#          if not per_class_accuracy[i]:
+#            per_class_accuracy[i] = 0.0
+#          per_class_accuracy[i] += j 
         if step % 20 == 0:
           duration = time.time() - start_time
           sec_per_batch = duration / 20.0
@@ -125,9 +126,9 @@ def _eval_once(saver, summary_writer, top_1_op, top_5_op, summary_op, labels):
       recall_at_5 = count_top_5 / total_sample_count
       print('%s: precision @ 1 = %.4f recall @ 5 = %.4f [%d examples]' %
             (datetime.now(), precision_at_1, recall_at_5, total_sample_count))
-      for i in per_class_accuracy:
-        per_class_accuracy[i] = per_class_accuracy[i] / 50
-      print(per_class_accuracy)
+#      for i in per_class_accuracy:
+#        per_class_accuracy[i] = per_class_accuracy[i] / 50
+#      print(per_class_accuracy)
       summary = tf.Summary()
       summary.ParseFromString(sess.run(summary_op))
       summary.value.add(tag='Precision @ 1', simple_value=precision_at_1)
