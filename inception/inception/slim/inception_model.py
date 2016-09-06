@@ -84,32 +84,32 @@ def inception_v3(inputs,
       with scopes.arg_scope([ops.conv2d, ops.max_pool, ops.avg_pool],
                             stride=1, padding='VALID'):
         # 256 x 256 x 3
-        end_points['conv0'] = ops.conv2d(inputs, 16, [7, 7], stride=1,
+        end_points['conv0'] = ops.conv2d(inputs, 8, [5, 5], stride=1,
                                          scope='conv0', padding='SAME')
         
         end_points['batch_norm1'] = ops.batch_norm(end_points['conv0'], scope='batch_norm1')
 
         # 256 x 256 x 32
-        end_points['conv1'] = ops.conv2d(end_points['batch_norm1'], 32, [5, 5],
+        end_points['conv1'] = ops.conv2d(end_points['batch_norm1'], 16, [3, 3],
                                          scope='conv1', padding='SAME')
 
         end_points['batch_norm2'] = ops.batch_norm(end_points['conv1'], scope='batch_norm2')
 
         # 128 x 128 x 64
-        end_points['conv2'] = ops.conv2d(end_points['batch_norm2'], 32, [3, 3],
-                                         stride=2, scope='conv2')
+        end_points['conv2'] = ops.conv2d(end_points['batch_norm2'], 16, [3, 3],
+                                         scope='conv2', padding='SAME')
         
         end_points['batch_norm3'] = ops.batch_norm(end_points['conv2'], scope='batch_norm3')
 
         in_net = end_points['batch_norm3']
         print('IN_NET SHAPE')
         print(in_net.get_shape())
-        curr_filters = 32
-        base_layer_num = 5
-        for i in xrange(1,4):
-          for j in xrange(1,base_layer_num + i):
+        curr_filters = 16
+        base_layer_num = [32,16,8,4]
+        for i in xrange(1,5):
+          for j in xrange(1,base_layer_num[i-1] + i):
             with tf.variable_scope('res%d_%d' % (i,j)):
-              if (j < (base_layer_num + i - 1)):
+              if (j < (base_layer_num[i-1] + i - 1)):
                 curr_padding = 'SAME'
                 curr_stride = 1
               else:
@@ -120,7 +120,7 @@ def inception_v3(inputs,
               conv1_1 = ops.conv2d(in_net, curr_filters, [3, 3], padding=curr_padding, stride=curr_stride, scope='conv1_1')
               batch_norm1_1 = ops.batch_norm(conv1_1, scope='batch_norm1_1')
               conv1_2 = ops.conv2d(batch_norm1_1, curr_filters, [3, 3], padding='SAME', scope='conv1_2')
-              if (j < (base_layer_num + i - 1)):
+              if (j < (base_layer_num[i-1] + i - 1)):
                 combined = in_net + conv1_2
               else:
                 combined = ops.conv2d(in_net, curr_filters, [1, 1], padding='SAME', stride=2, scope='combined')
@@ -133,7 +133,7 @@ def inception_v3(inputs,
               end_points['res%d_%d' %(i,j)] = in_net
 
 #        for i in xrange(1,int(np.log2(in_net.get_shape()[1])) + 1):
-        print('SHAPPEEEE')
+#        print('SHAPPEEEE')
         print(in_net.get_shape())
         for i in xrange(1,3):
           with tf.variable_scope('res_final%d' % i):

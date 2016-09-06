@@ -73,7 +73,7 @@ def inference(images, num_classes, for_training=False, restore_logits=True,
       'epsilon': 0.001,
   }
   # Set weight_decay for weights in Conv and FC layers.
-  with slim.arg_scope([slim.ops.conv2d, slim.ops.fc], weight_decay=0.00004):
+  with slim.arg_scope([slim.ops.conv2d, slim.ops.fc], weight_decay=0.0001):
     with slim.arg_scope([slim.ops.conv2d],
                         stddev=0.1,
                         activation=tf.nn.relu,
@@ -130,12 +130,12 @@ def loss(logits, labels, batch_size=None):
                                  weight=1.0)
 
   # Cross entropy loss for the auxiliary softmax head.
-  if (logits[1]):
-    slim.losses.cross_entropy_loss(logits[1],
-                                   dense_labels,
-                                   label_smoothing=0.1,
-                                   weight=0.4,
-                                   scope='aux_loss')
+#  if (logits[1]):
+#    slim.losses.cross_entropy_loss(logits[1],
+#                                   dense_labels,
+#                                   label_smoothing=0.1,
+#                                   weight=0.4,
+#                                   scope='aux_loss')
 
 
 def _activation_summary(x):
