@@ -105,7 +105,7 @@ def inception_v3(inputs,
         print('IN_NET SHAPE')
         print(in_net.get_shape())
         curr_filters = 16
-        base_layer_num = [16,12,8,4]
+        base_layer_num = [32,16,8,4]
         for i in xrange(1,5):
           for j in xrange(1,base_layer_num[i-1] + i):
             with tf.variable_scope('res%d_%d' % (i,j)):
